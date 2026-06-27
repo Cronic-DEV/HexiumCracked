@@ -3851,29 +3851,28 @@
       }
     };
     const bindModePill = (pillId, configKey, onChange) => {
-      const applyAuthInfoLocal25 = document.getElementById(pillId);
-      if (!applyAuthInfoLocal25) {
+      const pillEl = document.getElementById(pillId);
+      if (!pillEl) {
         return;
       }
-      applyAuthInfoLocal25.querySelectorAll("button").forEach(applyAuthInfoParam13 => {
-        applyAuthInfoParam13.classList.toggle("active", (applyAuthInfoParam13.dataset.mode === config[applyAuthInfoParam2]));
+      pillEl.querySelectorAll("button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === config[configKey]);
       });
-      applyAuthInfoLocal25.addEventListener("click", applyAuthInfoParam13 => {
-        if (applyAuthInfoLocal12.jMtUC === applyAuthInfoLocal12.jMtUC) {
-          const applyAuthInfoLocal15 = applyAuthInfoParam13.target.closest("button");
-          if (!applyAuthInfoLocal15) {
-            return;
-          }
-          applyAuthInfoLocal25.querySelectorAll(applyAuthInfoLocal12.MTxux).forEach(applyAuthInfoParam14 => applyAuthInfoParam14.classList.remove("active"));
-          applyAuthInfoLocal15.classList.add(applyAuthInfoLocal12.NLfyf);
-          config[applyAuthInfoParam2] = applyAuthInfoLocal15.dataset.mode;
-          saveConfig(config);
-          applyAuthInfoLocal12.OPWkU(applyAuthInfoParam3);
-          applySidebarNavStyle();
-          applySidebarStyle();
-          applyAuthInfoLocal12.gYCol(applyAuthInfoLocal9);
-        } else {
+      pillEl.addEventListener("click", e => {
+        const btn = e.target.closest("button");
+        if (!btn) {
+          return;
         }
+        pillEl.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        config[configKey] = btn.dataset.mode;
+        saveConfig(config);
+        if (onChange) {
+          onChange();
+        }
+        applySidebarNavStyle();
+        applySidebarStyle();
+        applyAuthInfoLocal9();
       });
     };
     const applyAuthInfoLocal9 = () => {
@@ -3890,8 +3889,8 @@
         applyAuthInfoLocal32.style.display = (config.navbarMode === "colour") ? "" : "none";
       }
     };
-    applyAuthInfoLocal8("pks-sidebar-mode-pill", "sidebarMode", null);
-    applyAuthInfoLocal8("pks-navbar-mode-pill", "navbarMode", null);
+    bindModePill("pks-sidebar-mode-pill", "sidebarMode", null);
+    bindModePill("pks-navbar-mode-pill", "navbarMode", null);
     applyAuthInfoLocal9();
     const themeGridEl = document.getElementById("pks-theme-grid");
     Object.entries(THEME_PRESETS).forEach(([applyAuthInfoParam12, applyAuthInfoParam2]) => {
@@ -4010,19 +4009,10 @@
       if (rReloadMsEl) {
         rReloadMsEl.value = config.hardRefreshInterval;
       }
-      [["pks-hk-record-toggle-gui", "hotkeyToggleGui"], ["pks-hk-record-refresher", "hotkeyRefresher"], ["pks-hk-record-hardrefresh", "hotkeyHardRefresh"]].forEach(([applyAuthInfoParam12, applyAuthInfoParam2]) => {
-        const applyAuthInfoLocal12 = {
-          AjXlW: panelUi.VONrE,
-          igpqb: function (igpqbParam1) {
-            return igpqbParam1();
-          },
-          obKaU: function (obKaUParam1) {
-            return obKaUParam1();
-          }
-        };
-        const applyAuthInfoLocal25 = document.getElementById(applyAuthInfoParam12);
-        if (applyAuthInfoLocal25) {
-          applyAuthInfoLocal25.textContent = config[applyAuthInfoParam2] || "none";
+      [["pks-hk-record-toggle-gui", "hotkeyToggleGui"], ["pks-hk-record-refresher", "hotkeyRefresher"], ["pks-hk-record-hardrefresh", "hotkeyHardRefresh"]].forEach(([elId, configKey]) => {
+        const el = document.getElementById(elId);
+        if (el) {
+          el.textContent = config[configKey] || "none";
         }
       });
       ["pks-sidebar-mode-pill", "pks-navbar-mode-pill"].forEach(applyAuthInfoParam12 => {
@@ -4050,55 +4040,22 @@
       applyAuthInfoLocal9();
     };
     applyAuthInfoLocal13();
-    const applyAuthInfoLocal14 = () => {
-      const applyAuthInfoLocal12 = panelUi.mlGBD.split("|");
-      let applyAuthInfoLocal25 = 0;
-      while (true) {
-        switch (applyAuthInfoLocal12[applyAuthInfoLocal25++]) {
-          case "0":
-            applyCatalogSidebarHide();
-            continue;
-          case "1":
-            applyAvatarGlassify();
-            continue;
-          case "2":
-            renderWatermark();
-            continue;
-          case "3":
-            applySidebarStyle();
-            continue;
-          case "4":
-            startEffects();
-            continue;
-          case "5":
-            applyAvatarBackground();
-            continue;
-          case "6":
-            applyTradesBackground();
-            continue;
-          case "7":
-            applyThemeStyles();
-            continue;
-          case "8":
-            applyAuthInfoLocal9();
-            continue;
-          case "9":
-            applySidebarNavStyle();
-            continue;
-          case "10":
-            if (isTradesPage()) {
-              applyTradesPageStyle();
-            }
-            continue;
-          case "11":
-            applyFrameStyles();
-            continue;
-          case "12":
-            hideTradePageChrome();
-            continue;
-        }
-        break;
+    const applyMiscSettings = () => {
+      applyCatalogSidebarHide();
+      applyAvatarGlassify();
+      renderWatermark();
+      applySidebarStyle();
+      startEffects();
+      applyAvatarBackground();
+      applyTradesBackground();
+      applyThemeStyles();
+      applyAuthInfoLocal9();
+      applySidebarNavStyle();
+      if (isTradesPage()) {
+        applyTradesPageStyle();
       }
+      applyFrameStyles();
+      hideTradePageChrome();
     };
     divEl.addEventListener("change", applyAuthInfoParam12 => {
       const applyAuthInfoLocal12 = applyAuthInfoParam12.target;
@@ -4133,7 +4090,7 @@
         config[applyAuthInfoLocal32] = applyAuthInfoLocal12.value || (setInstance.has(applyAuthInfoLocal25) ? "" : DEFAULT_CONFIG[applyAuthInfoLocal32]);
       }
       saveConfig(config);
-      applyAuthInfoLocal14();
+      applyMiscSettings();
       if (applyAuthInfoLocal25 === "cfg-tradesMetric" && tradeOverlayEl) {
         tradeOverlayEl();
       }
@@ -4202,7 +4159,7 @@
       config.larpVerify = cfgLarpVerifyEl.checked;
       saveConfig(config);
       startLarpVerifyWatcher();
-      showNotification(config.larpVerify ? "Fake verify on" : panelUi.OARqh, "info");
+      showNotification(config.larpVerify ? "Fake verify on" : panelUi.msgFakeVerifyOff, "info");
     });
     const applyAuthInfoLocal21 = {};
     const applyAuthInfoLocal22 = () => {
@@ -4406,50 +4363,37 @@
       showNotification("Config exported (copied to clipboard)", "success");
     });
     document.getElementById("pks-cfg-import")?.addEventListener("click", () => {
-      const applyAuthInfoLocal12 = {
-        rhCuZ: function (rhCuZParam1, rhCuZParam2, rhCuZParam3) {
-          return rhCuZParam1(rhCuZParam2, rhCuZParam3);
-        },
-        ibyhn: "active",
-        TVywy: function (TVywyParam1, TVywyParam2) {
-          return (TVywyParam1 === TVywyParam2);
-        },
-        spbWq: function (spbWqParam1, spbWqParam2) {
-          return (spbWqParam1 === spbWqParam2);
-        },
-        xMFnG: "#1e1e2a"
-      };
-      const applyAuthInfoLocal25 = document.getElementById("pks-cfg-json");
-      const applyAuthInfoLocal32 = (applyAuthInfoLocal25?.value || "").trim();
-      if (!applyAuthInfoLocal32) {
+      const cfgJsonEl = document.getElementById("pks-cfg-json");
+      const rawJson = (cfgJsonEl?.value || "").trim();
+      if (!rawJson) {
         showNotification("Paste config JSON first", "error");
         return;
       }
-      let applyAuthInfoLocal4;
+      let imported;
       try {
-        applyAuthInfoLocal4 = JSON.parse(applyAuthInfoLocal32);
+        imported = JSON.parse(rawJson);
       } catch {
         showNotification("Invalid JSON", "error");
         return;
       }
-      if (!applyAuthInfoLocal4 || typeof applyAuthInfoLocal4 !== "object" || Array.isArray(applyAuthInfoLocal4)) {
+      if (!imported || typeof imported !== "object" || Array.isArray(imported)) {
         showNotification("Invalid config", "error");
         return;
       }
-      const applyAuthInfoLocal5 = Object.assign({}, DEFAULT_CONFIG);
-      for (const applyAuthInfoLocal15 of Object.keys(DEFAULT_CONFIG)) {
-        if ((applyAuthInfoLocal15 in applyAuthInfoLocal4)) {
-          applyAuthInfoLocal5[applyAuthInfoLocal15] = applyAuthInfoLocal4[applyAuthInfoLocal15];
+      const merged = Object.assign({}, DEFAULT_CONFIG);
+      for (const key of Object.keys(DEFAULT_CONFIG)) {
+        if (key in imported) {
+          merged[key] = imported[key];
         }
       }
-      config = applyAuthInfoLocal5;
+      config = merged;
       saveConfig(config);
       applyAuthInfoLocal13();
       applyAuthInfoLocal24();
-      document.getElementById("pks-theme-grid")?.querySelectorAll(".pks-theme-swatch").forEach((applyAuthInfoParam12, applyAuthInfoParam2) => {
-        const applyAuthInfoLocal15 = Object.keys(THEME_PRESETS)[applyAuthInfoParam2];
-        applyAuthInfoParam12.classList.toggle(applyAuthInfoLocal12.ibyhn, applyAuthInfoLocal12.TVywy(applyAuthInfoLocal15, config.theme));
-        applyAuthInfoParam12.style.borderColor = applyAuthInfoLocal12.spbWq(applyAuthInfoLocal15, config.theme) ? THEME_PRESETS[applyAuthInfoLocal15].accent : applyAuthInfoLocal12.xMFnG;
+      document.getElementById("pks-theme-grid")?.querySelectorAll(".pks-theme-swatch").forEach((swatch, i) => {
+        const themeKey = Object.keys(THEME_PRESETS)[i];
+        swatch.classList.toggle("active", themeKey === config.theme);
+        swatch.style.borderColor = themeKey === config.theme ? THEME_PRESETS[themeKey].accent : "#1e1e2a";
       });
       showNotification("Config imported", "success");
     });
